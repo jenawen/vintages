@@ -3,7 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-df=pd.read_csv(r"C:\Users\JeAdkins\OneDrive - CreditOne Bank\Documents\Data_Test.csv", dtype="unicode")
+df = pd.read_csv(r"C:\Users\JeAdkins\OneDrive - CreditOne Bank\Documents\Data_Test.csv", dtype="unicode")
+
 
 clist = df['Vintage'].unique()
 clist1 = df['FirstSecond'].unique()
@@ -25,6 +26,8 @@ Association = st.sidebar.selectbox("Association", clist5)
 AnnualFeeGroup = st.sidebar.selectbox("AnnualFeeGroup", clist6)
 OriginalCreditLineRange = st.sidebar.selectbox("OriginalCreditLineRange", clist7)
 
+
+
 ##Need an empty array to store all the filtered objects 
 frames2 = []
 
@@ -43,6 +46,7 @@ def main():
         st.session_state['df_result'] = st.session_state['df_result'].loc[(df['Vintage'] == selected) & (df['FirstSecond'] == FirstSecond) & (df['Branding'] == Branding) & (df['Channel'] == Channel) & (df['Source'] == Source)
                     & (df['Association'] == Association) & (df['AnnualFeeGroup'] == AnnualFeeGroup) & (df['OriginalCreditLineRange'] == OriginalCreditLineRange)
 ]
+     
 
 df1 = st.session_state['df_result']
     # st.session_state
@@ -59,23 +63,28 @@ if 'df_result2' not in st.session_state:
 
 ##Need to initalize as many session states as # of vintages selected 
 ### onClick of add button, append the new filtered object to the array
+for i in enumerate(options):
+    if f"df_result_{i[0]}" not in st.session_state:
+        st.session_state[f"df_result_{i[0]}"] = f"df_{i[0]}"
 
 def add_to_main():
     add = st.sidebar.button('add')
     if add:
-        for i in enumerate(options):
-             if f"df_result_{i[0]}" not in st.session_state:
-                st.session_state[f"df_result_{i[0]}"] = f"df_{i[0]}"
-    
-                st.session_state[f"df_result_{i[0]}"] = st.session_state[f"df_result_{i[0]}"].loc[(df['Vintage'] == selected) & (df['FirstSecond'] == FirstSecond) & (df['Branding'] == Branding) & (df['Channel'] == Channel) & (df['Source'] == Source)
+        st.session_state["df_result2"] = st.session_state["df_result2"].loc[(df['Vintage'] == selected) & (df['FirstSecond'] == FirstSecond) & (df['Branding'] == Branding) & (df['Channel'] == Channel) & (df['Source'] == Source)
                     & (df['Association'] == Association) & (df['AnnualFeeGroup'] == AnnualFeeGroup) & (df['OriginalCreditLineRange'] == OriginalCreditLineRange) ]
-                frames2.append( st.session_state[f"df_result_{i[0]}"])
-                st.write('hi', frames2)
+        
+df2 = st.session_state['df_result2']
+
+        
+        # for i in enumerate(options):
+                # st.session_state[f"df_result_{i[0]}"] = st.session_state[f"df_result_{i[0]}"].loc[(df['Vintage'] == selected) & (df['FirstSecond'] == FirstSecond) & (df['Branding'] == Branding) & (df['Channel'] == Channel) & (df['Source'] == Source)
+                #     & (df['Association'] == Association) & (df['AnnualFeeGroup'] == AnnualFeeGroup) & (df['OriginalCreditLineRange'] == OriginalCreditLineRange) ]
+                # frames2.append( st.session_state[f"df_result_{i[0]}"])
+                # st.write('hi', frames2)
    
         
         
         
-df2 = st.session_state['df_result2']
 
 frames = [df1, df2]
 result = pd.concat(frames)
