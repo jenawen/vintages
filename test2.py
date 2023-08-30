@@ -74,11 +74,14 @@ def add_to_main():
         st.session_state['isDfAdded'] = True
 
 
+st.header("Vintage Comparison")
+options = st.multiselect("Select vintages:", clist, key="vintages_selected")
+
 with st.form('my_form'):
     with st.sidebar:
         # options = st.multiselect("Select vintages:", clist, key="vintages_selected")
         selected = st.selectbox("Selected Vintages:",
-                                clist, key="current_vintage")
+                                options, key="current_vintage")
         FirstSecond = st.selectbox("FirstSecond:", clist1)
         Branding = st.selectbox("Branding", clist2)
         Channel = st.selectbox("Channel", clist3)
@@ -89,9 +92,6 @@ with st.form('my_form'):
             "OriginalCreditLineRange", clist7)
         submit = st.form_submit_button('Display Vintage')
         add = st.form_submit_button('Add a Vintage')
-
-
-st.header("Vintage Comparison")
 
 
 if __name__ == "__main__":
