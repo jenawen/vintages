@@ -40,6 +40,8 @@ if "isDfAdded" not in st.session_state:
     st.session_state['isDfAdded'] = False;
     
 
+    
+
 def main():
     if submit:
         #filter original df using selected values
@@ -53,8 +55,8 @@ def main():
               & (df['AnnualFeeGroup'] == AnnualFeeGroup) 
               & (df['OriginalCreditLineRange'] == OriginalCreditLineRange)]
         #store this new df into blank_df made earlier
-        st.session_state['blank_df'] = pd.concat([st.session_state['blank_df'], df_new], axis=0)
-        #new dataframe
+        st.session_state['blank_df'] = pd.concat([st.session_state['blank_df'], df_new], axis=0) 
+
       
 
 def add_to_main():
@@ -69,14 +71,8 @@ def add_to_main():
               & (df['OriginalCreditLineRange'] == OriginalCreditLineRange)]
         st.session_state['added_df'] = pd.concat([st.session_state['blank_df'], df_add], axis=0)
         st.session_state['isDfAdded'] = True;
-        st.session_state['isOnLoadDisplay'] = False;
-       
-    
-def toggle_display():
-    st.session_state['isOnLoadDisplay'] = False;
-    main()
-    
-    
+
+
 with st.form('my_form'):
     with st.sidebar:
         # options = st.multiselect("Select vintages:", clist, key="vintages_selected")
@@ -88,42 +84,34 @@ with st.form('my_form'):
         Association = st.selectbox("Association", clist5)
         AnnualFeeGroup = st.selectbox("AnnualFeeGroup", clist6)
         OriginalCreditLineRange = st.selectbox("OriginalCreditLineRange", clist7)
-        submit = st.form_submit_button('submit', on_click=toggle_display)
-        add = st.form_submit_button('add', on_click=add_to_main)
+        submit = st.form_submit_button('submit')
+        add = st.form_submit_button('add')
         
         
 st.header("Vintage Comparison")
-
 
 #LOAD THE ENTIRE DF AND ALL PLOT LINES ON LOAD, this is default case
 if st.session_state['blank_df'].empty == True:
     st.write(df)
     fig1 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['ActiveAccountIndicator'], color=df['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
     st.plotly_chart(fig1)
-            # fig2 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['CumlROAAnnualized'], color=result['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
-            # fig2.update_layout(yaxis_ticksuffix = ".3%")
-            # st.plotly_chart(fig2)
-            # fig3 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['CumlPreTaxIncome'], color=result['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
-            # st.plotly_chart(fig3)
-            # fig4 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['EndingReceivable'], color=result['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
-            # st.plotly_chart(fig4)
-#USER HAS SELECTED FILTER VALUES, blank_df is no longer empty
-else:
-    st.dataframe(st.session_state['blank_df'])
-    fig2 = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['ActiveAccountIndicator'], color=st.session_state['blank_df']['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
+    fig2 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlROAAnnualized'], color=df['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
+    fig2.update_layout(yaxis_ticksuffix = ".3%")
     st.plotly_chart(fig2)
-            # fig2 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['CumlROAAnnualized'], color=result['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
-            # fig2.update_layout(yaxis_ticksuffix = ".3%")
-            # st.plotly_chart(fig2)
-            # fig3 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['CumlPreTaxIncome'], color=result['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
-            # st.plotly_chart(fig3)
-            # fig4 = px.line(result.melt(id_vars="Vintage"),x=result['MonthsOnBooks'], y=result['EndingReceivable'], color=result['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
-            # st.plotly_chart(fig4)
+    fig3 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlPreTaxIncome'], color=df['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig3)
+    fig4 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['EndingReceivable'], color=df['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig4)
+elif st.session_state['blank_df'].empty == False and st.session_state['isDfAdded'] == False:
+    st.dataframe(st.session_state['blank_df'])
+    fig2a = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['ActiveAccountIndicator'], color=st.session_state['blank_df']['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig2a)
+elif st.session_state['added_df'].empty == False and st.session_state['isDfAdded'] == True:
+    st.dataframe(st.session_state['added_df'])
+    fig3a = px.line(st.session_state['added_df'].melt(id_vars="Vintage"),x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['ActiveAccountIndicator'], color=st.session_state['added_df']['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig3a)
 
-if st.session_state['isDfAdded'] == True & st.session_state['isOnLoadDisplay'] == False:
-    st.write('IT HAS BEEN ADDED',st.session_state['added_df'])
- 
-    
+
 if __name__ == "__main__":
     main()
    
