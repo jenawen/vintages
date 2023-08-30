@@ -93,23 +93,40 @@ st.header("Vintage Comparison")
 #LOAD THE ENTIRE DF AND ALL PLOT LINES ON LOAD, this is default case
 if st.session_state['blank_df'].empty == True:
     st.write(df)
-    fig1 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['ActiveAccountIndicator'], color=df['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
-    st.plotly_chart(fig1)
-    fig2 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlROAAnnualized'], color=df['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
-    fig2.update_layout(yaxis_ticksuffix = ".3%")
-    st.plotly_chart(fig2)
-    fig3 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlPreTaxIncome'], color=df['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
-    st.plotly_chart(fig3)
-    fig4 = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['EndingReceivable'], color=df['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
-    st.plotly_chart(fig4)
+    fig1a = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['ActiveAccountIndicator'], color=df['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig1a)
+    fig1b = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlROAAnnualized'], color=df['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
+    fig1b.update_layout(yaxis_ticksuffix = ".3%")
+    st.plotly_chart(fig1b)
+    fig1c = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['CumlPreTaxIncome'], color=df['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig1c)
+    fig1d = px.line(df.melt(id_vars="Vintage"),x=df['MonthsOnBooks'], y=df['EndingReceivable'], color=df['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig1d)
 elif st.session_state['blank_df'].empty == False and st.session_state['isDfAdded'] == False:
     st.dataframe(st.session_state['blank_df'])
     fig2a = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['ActiveAccountIndicator'], color=st.session_state['blank_df']['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
     st.plotly_chart(fig2a)
+    fig2b = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['CumlROAAnnualized'], color=st.session_state['blank_df']['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
+    fig2b.update_layout(yaxis_ticksuffix = ".3%")
+    st.plotly_chart(fig2b)
+    fig2c = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['CumlPreTaxIncome'], color=st.session_state['blank_df']['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig2c)
+    fig2d = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"),x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['EndingReceivable'], color=st.session_state['blank_df']['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig2d)
 elif st.session_state['added_df'].empty == False and st.session_state['isDfAdded'] == True:
     st.dataframe(st.session_state['added_df'])
     fig3a = px.line(st.session_state['added_df'].melt(id_vars="Vintage"),x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['ActiveAccountIndicator'], color=st.session_state['added_df']['Vintage'], markers=True, title='Active Accounts', labels={'y':'Active Accounts', 'x':'Months on Book', "color":"Vintage"})
     st.plotly_chart(fig3a)
+    fig3b = px.line(st.session_state['added_df'].melt(id_vars="Vintage"),x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['CumlROAAnnualized'], color=st.session_state['added_df']['Vintage'], markers=True, title='CumlROAAnnualized', labels={'y':'ROAAnnualized', 'x':'Months on Book', "color":"Vintage"})
+    fig3b.update_layout(yaxis_ticksuffix = ".3%")
+    st.plotly_chart(fig3b)
+    fig3c = px.line(st.session_state['added_df'].melt(id_vars="Vintage"),x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['CumlPreTaxIncome'], color=st.session_state['added_df']['Vintage'], markers=True, title='CumlPreTaxIncome', labels={'y':'PreTaxIncome', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig3c)
+    fig3d = px.line(st.session_state['added_df'].melt(id_vars="Vintage"),x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['EndingReceivable'], color=st.session_state['added_df']['Vintage'], markers=True, title='EndingReceivable', labels={'y':'EndingReceivable', 'x':'Months on Book', "color":"Vintage"})
+    st.plotly_chart(fig3d)
+
+
+
 
 
 if __name__ == "__main__":
