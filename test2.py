@@ -2,9 +2,12 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import numpy as np
 
 df = pd.read_csv(
     r"C:\Users\JeAdkins\OneDrive - CreditOne Bank\Documents\Data_Test.csv", dtype="unicode")
+dfFixNone = df.replace(np.nan, 'None')
+df = dfFixNone
 
 clist = df['Vintage'].unique()
 clist1 = df['FirstSecond'].unique()
@@ -79,6 +82,7 @@ options = st.multiselect("Select vintages:", clist, key="vintages_selected")
 
 with st.form('my_form'):
     with st.sidebar:
+        st.subheader('Vintage Filters')
         # options = st.multiselect("Select vintages:", clist, key="vintages_selected")
         selected = st.selectbox("Selected Vintages:",
                                 options, key="current_vintage")
