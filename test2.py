@@ -4,8 +4,22 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
+# possible features:
+# error handling
+# if a vintage is already added
+# if a vintage w filters does not exist x
+# for both Submit and Add
+# conditional rendering/disabling/enabling certain buttons
+# only submit appears first
+# once one vintage is added, switch button to add
+# clear functionality or reset to default
+# deleting a vintage from the graphs
+
 df = pd.read_csv(
     r"C:\Users\JeAdkins\OneDrive - CreditOne Bank\Documents\Data_Test.csv", dtype="unicode")
+
+# Replace any NaN values in table with a string "None"
+# Graph won't render otherwise
 dfFixNone = df.replace(np.nan, 'None')
 df = dfFixNone
 
@@ -22,7 +36,7 @@ clist7 = df['OriginalCreditLineRange'].unique()
 if 'df_default' not in st.session_state:
     st.session_state['df_default'] = df
 
-# initialize blank dataframe to hold new df created from user filters
+# initialize blank dataframe to hold First df created from user filters
 if 'blank_df' not in st.session_state:
     st.session_state['blank_df'] = pd.DataFrame(columns=[
         "Vintage", "FirstSecond", 'Branding', 'Channel', 'Source',
@@ -30,6 +44,7 @@ if 'blank_df' not in st.session_state:
         "ActiveAccountIndicator", "PreTaxIncome", "EndingReceivable", "CumlNewAccountIndicator", "CumlActiveAccountIndicator",
         "CumlPreTaxIncome", "CumlEndingReceivable", "AverageActives", "AverageReceivable", "CumlROA", "CumlROAAnnualized"])
 
+# initialize dataframe to be added to the main dataframe
 if "added_df" not in st.session_state:
     st.session_state['added_df'] = pd.DataFrame(columns=[
         "Vintage", "FirstSecond", 'Branding', 'Channel', 'Source',
@@ -37,14 +52,17 @@ if "added_df" not in st.session_state:
         "ActiveAccountIndicator", "PreTaxIncome", "EndingReceivable", "CumlNewAccountIndicator", "CumlActiveAccountIndicator",
         "CumlPreTaxIncome", "CumlEndingReceivable", "AverageActives", "AverageReceivable", "CumlROA", "CumlROAAnnualized"])
 
+# initialize boolean for adding a new vintage
+# True - the user wants to add another vintage
+# False - the user has not yet added another vintage
 if "isDfAdded" not in st.session_state:
     st.session_state['isDfAdded'] = False
 
 
 def main():
     if submit:
-        # filter original df using selected values
-        # create a new df from the filtered entire df
+        # filter from original df using selected values
+        # create a new filtered df from the entire df
         df_new = df.loc[(df['Vintage'] == selected)
                         & (df['FirstSecond'] == FirstSecond)
                         & (df['Branding'] == Branding)
@@ -60,6 +78,7 @@ def main():
 
 def add_to_main():
     if add:
+        # create a new filtered df from the entire df
         df_add = df.loc[(df['Vintage'] == selected)
                         & (df['FirstSecond'] == FirstSecond)
                         & (df['Branding'] == Branding)
@@ -68,22 +87,32 @@ def add_to_main():
                         & (df['Association'] == Association)
                         & (df['AnnualFeeGroup'] == AnnualFeeGroup)
                         & (df['OriginalCreditLineRange'] == OriginalCreditLineRange)]
+        # ERROR - if the vintage user tries to add doesnt exist, output warning
+        if df_add.empty == True:
+            st.warning('The specified vintage does not exist.', icon="⚠️")
+        # IF THE ADDED DF IS EMPTY
+        # User has not yet added another dataframe to the initial dataframe, this runs if the Add button is hit for the First time
         if st.session_state['added_df'].empty == True:
             st.session_state['added_df'] = pd.concat(
                 [st.session_state['blank_df'], df_add], axis=0)
+        # IF THE ADDED DF IS NOT EMPTY
+        # User has added a df before, just take the previous df and concat with new one
         elif st.session_state['added_df'].empty == False:
             st.session_state['added_df'] = pd.concat(
                 [st.session_state['added_df'], df_add], axis=0)
         st.session_state['isDfAdded'] = True
 
 
+def clear_main():
+    if clear:
+        st.write('hi')
+
+
 st.header("Vintage Comparison")
 options = st.multiselect("Select vintages:", clist, key="vintages_selected")
-
 with st.form('my_form'):
     with st.sidebar:
-        st.subheader('Vintage Filters')
-        # options = st.multiselect("Select vintages:", clist, key="vintages_selected")
+        st.header('Filters')
         selected = st.selectbox("Selected Vintages:",
                                 options, key="current_vintage")
         FirstSecond = st.selectbox("FirstSecond:", clist1)
@@ -94,18 +123,16 @@ with st.form('my_form'):
         AnnualFeeGroup = st.selectbox("AnnualFeeGroup", clist6)
         OriginalCreditLineRange = st.selectbox(
             "OriginalCreditLineRange", clist7)
-        submit = st.form_submit_button('Display Vintage')
-        add = st.form_submit_button('Add a Vintage')
-
+        submit = st.form_submit_button('Submit')
+        add = st.form_submit_button('Add')
+        clear = st.form_submit_button('Reset Vintages')
 
 if __name__ == "__main__":
     main()
-
-if __name__ == "__main__":
     add_to_main()
+    clear_main()
 
-
-# LOAD THE ENTIRE DF AND ALL PLOT LINES ON LOAD, this is default case
+# ENTIRE DF AND ALL PLOT LINES ON LOAD, this is default case
 if st.session_state['blank_df'].empty == True:
     st.write(df)
     fig1a = px.line(df.melt(id_vars="Vintage"), x=df['MonthsOnBooks'], y=df['ActiveAccountIndicator'], color=df['Vintage'],
@@ -121,6 +148,7 @@ if st.session_state['blank_df'].empty == True:
     fig1d = px.line(df.melt(id_vars="Vintage"), x=df['MonthsOnBooks'], y=df['EndingReceivable'], color=df['Vintage'],
                     markers=True, title='EndingReceivable', labels={'y': 'EndingReceivable', 'x': 'Months on Book', "color": "Vintage"})
     st.plotly_chart(fig1d)
+# THE FIRST FILTERED DF WILL DISPLAY, this case happens on first click of "Display Vintage"
 elif st.session_state['blank_df'].empty == False and st.session_state['isDfAdded'] == False:
     st.dataframe(st.session_state['blank_df'])
     fig2a = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"), x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['ActiveAccountIndicator'],
@@ -136,6 +164,7 @@ elif st.session_state['blank_df'].empty == False and st.session_state['isDfAdded
     fig2d = px.line(st.session_state['blank_df'].melt(id_vars="Vintage"), x=st.session_state['blank_df']['MonthsOnBooks'], y=st.session_state['blank_df']['EndingReceivable'],
                     color=st.session_state['blank_df']['Vintage'], markers=True, title='EndingReceivable', labels={'y': 'EndingReceivable', 'x': 'Months on Book', "color": "Vintage"})
     st.plotly_chart(fig2d)
+# THE ADDED VINTAGES WILL DISPLAY, this case happens after n clicks of "Add a Vintage"
 elif st.session_state['added_df'].empty == False and st.session_state['isDfAdded'] == True:
     st.dataframe(st.session_state['added_df'])
     fig3a = px.line(st.session_state['added_df'].melt(id_vars="Vintage"), x=st.session_state['added_df']['MonthsOnBooks'], y=st.session_state['added_df']['ActiveAccountIndicator'],
